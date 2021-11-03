@@ -1,0 +1,22 @@
+{
+	"autoload" : {
+		"psr-4" : {
+			"Inspire\\Validator\\" : "src"
+		}
+	},
+	"name" : "inspire/validator",
+	"type" : "library",
+	"description" : "Data validator",
+	"license" : "MIT",
+	"require" : {
+		"php" : ">=7.4",
+		"respect/validation" : "~2.2",
+		"inspire/core" : "dev-main"
+	},
+	"authors" : [{
+			"name" : "André",
+			"email" : "aluisalves0@gmail.com"
+		}
+	],
+	"minimum-stability" : "dev"
+}
