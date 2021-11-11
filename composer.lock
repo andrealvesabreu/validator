@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06ddea460903755af2eaf2857db81067",
+    "content-hash": "cce68c7a5bdbd8dcc18bf3d58a18f636",
     "packages": [
         {
             "name": "cache/adapter-common",
@@ -730,16 +730,16 @@
         },
         {
             "name": "inspire/core",
-            "version": "dev-main",
+            "version": "0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/andrealvesabreu/core.git",
-                "reference": "905b164a2508c3608eacc08bd6c634ae5ad1cd46"
+                "reference": "e3cac7a7190581ab6f77af749988f047d2cee879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/andrealvesabreu/core/zipball/905b164a2508c3608eacc08bd6c634ae5ad1cd46",
-                "reference": "905b164a2508c3608eacc08bd6c634ae5ad1cd46",
+                "url": "https://api.github.com/repos/andrealvesabreu/core/zipball/e3cac7a7190581ab6f77af749988f047d2cee879",
+                "reference": "e3cac7a7190581ab6f77af749988f047d2cee879",
                 "shasum": ""
             },
             "require": {
@@ -753,10 +753,8 @@
                 "nette/utils": "~3.2",
                 "opis/json-schema": "2.2.0",
                 "php": ">=7.4",
-                "pwfisher/command-line-php": "dev-master",
                 "voku/portable-ascii": "~1.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -777,9 +775,9 @@
             "description": "Core to common PHP API",
             "support": {
                 "issues": "https://github.com/andrealvesabreu/core/issues",
-                "source": "https://github.com/andrealvesabreu/core/tree/main"
+                "source": "https://github.com/andrealvesabreu/core/tree/0.10"
             },
-            "time": "2021-11-03T02:50:02+00:00"
+            "time": "2021-11-11T01:38:56+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -928,12 +926,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "434e81b4edc96e0fec1fbc7cd5b81f4d294ed794"
+                "reference": "eed83939f1aed3eee517d03a33f5ec587ac529b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/434e81b4edc96e0fec1fbc7cd5b81f4d294ed794",
-                "reference": "434e81b4edc96e0fec1fbc7cd5b81f4d294ed794",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/eed83939f1aed3eee517d03a33f5ec587ac529b5",
+                "reference": "eed83939f1aed3eee517d03a33f5ec587ac529b5",
                 "shasum": ""
             },
             "require": {
@@ -1016,7 +1014,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-18T21:30:17+00:00"
+            "time": "2021-11-01T21:22:20+00:00"
         },
         {
             "name": "nette/utils",
@@ -1346,20 +1344,20 @@
         },
         {
             "name": "psr/container",
-            "version": "1.1.x-dev",
+            "version": "1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf"
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/8622567409010282b7aeebe4bb841fe98b58dcaf",
-                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
+                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.0"
+                "php": ">=7.4.0"
             },
             "type": "library",
             "autoload": {
@@ -1388,9 +1386,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.x"
+                "source": "https://github.com/php-fig/container/tree/1.1.2"
             },
-            "time": "2021-03-05T17:36:06+00:00"
+            "time": "2021-11-05T16:50:12+00:00"
         },
         {
             "name": "psr/log",
@@ -1492,52 +1490,6 @@
                 "source": "https://github.com/php-fig/simple-cache/tree/master"
             },
             "time": "2017-10-23T01:57:42+00:00"
-        },
-        {
-            "name": "pwfisher/command-line-php",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pwfisher/CommandLine.php.git",
-                "reference": "ce756a94efa3544b56d03a02d3634a8d969ee962"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pwfisher/CommandLine.php/zipball/ce756a94efa3544b56d03a02d3634a8d969ee962",
-                "reference": "ce756a94efa3544b56d03a02d3634a8d969ee962",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "CommandLine.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "CC-BY-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Patrick Fisher",
-                    "email": "patrick@pwfisher.com"
-                }
-            ],
-            "description": "PHP Command Line interface class. Provides friendly and flexible CLI argument parsing.",
-            "keywords": [
-                "cli",
-                "parser",
-                "parsing"
-            ],
-            "support": {
-                "issues": "https://github.com/pwfisher/CommandLine.php/issues",
-                "source": "https://github.com/pwfisher/CommandLine.php/tree/master"
-            },
-            "time": "2014-09-23T01:07:11+00:00"
         },
         {
             "name": "respect/stringifier",
@@ -1904,12 +1856,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "1bbbed9136f49eedb059968cb70627dec7e3876b"
+                "reference": "70f9cd07dceda1bcd30fa1065e4b394435d5d5c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/1bbbed9136f49eedb059968cb70627dec7e3876b",
-                "reference": "1bbbed9136f49eedb059968cb70627dec7e3876b",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/70f9cd07dceda1bcd30fa1065e4b394435d5d5c1",
+                "reference": "70f9cd07dceda1bcd30fa1065e4b394435d5d5c1",
                 "shasum": ""
             },
             "require": {
@@ -1993,7 +1945,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-30T10:15:42+00:00"
+            "time": "2021-11-08T17:30:16+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -2151,14 +2103,12 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "inspire/core": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
