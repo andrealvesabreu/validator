@@ -9,9 +9,9 @@ use Respect\Validation\ {
 use Respect\Validation\Exceptions\ComponentException;
 
 /**
+ * Description of Variable
  *
  * @author aalves
- *        
  */
 class Variable
 {
@@ -43,9 +43,13 @@ class Variable
      *
      * @throws ComponentException
      */
-    public static function __callStatic(string $ruleName, array $arguments): Validator
+    public static function __callStatic(string $ruleName, array $arguments): bool
     {
-        return Variable::create()->__call($ruleName, $arguments);
+        $rule = Variable::create()->__call($ruleName, $arguments[1] ?? []);
+        return call_user_func_array([
+            $rule,
+            'validate'
+        ], $arguments);
     }
 
     /**
