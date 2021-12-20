@@ -53,7 +53,9 @@ class XsdSchema
             'type' => "O campo '?' deve ser um de [?], mas foi informado '?'.",
             'unexpected' => "O campo '?' não é esperado. Esperado é um de: ?.",
             'enum' => "O campo '?' deve ser preenchido com um dos seguintes valores: ?, mas foi preenchido com ?.",
-            'oneOf' => "O campo '?' não corresponde a nenhum dos esquemas disponíveis."
+            'oneOf' => "O campo '?' não corresponde a nenhum dos esquemas disponíveis.",
+            'noMatching' => "Não há regras de validação o elemento '?'.",
+            'fixed' => "O campo '?' deve ser preenchido o valor fixo '?', mas foi informado '?'"
         ],
         \Inspire\Core\System\Language::EN_US => [
             'minItems' => "The group '?' must have at least ? elements, but only ? was informed.",
@@ -76,7 +78,9 @@ class XsdSchema
             'type' => "The field '?' must be one of [?], but it was informed '?'.",
             'unexpected' => "The field '?' is unexpected. Expected is one of: ?.",
             'enum' => "The field '?' must be filled with one of the following values: ?, but was filled with ?.",
-            'oneOf' => "The field '?' does not match any of the available schemes."
+            'oneOf' => "The field '?' does not match any of the available schemes.",
+            'noMatching' => "There is no validation rule for '?' field.",
+            'fixed' => "The field '?' must be filled with the fixed value of '?', but '?' was filled."
         ]
     ];
 
@@ -160,6 +164,22 @@ class XsdSchema
         $fieldMessage = null;
         $ruleMessage = null;
         switch ($error->code) {
+            /**
+             * No matching global
+             */
+            case 1845:
+                $nodes = self::$xpath->query("//xsdsc:{$element}");
+                $fieldMessage = self::getPath($nodes[0]->getNodePath());
+                $ruleMessage = 'length';
+                $errMessage = preg_replace([
+                    "/\?/"
+                ], //
+                [
+                    $fieldMessage
+                ], //
+                self::$readable_messages[self::$lang]['noMatching'], //
+                1);
+                break;
             /**
              * exactly length
              */
@@ -297,6 +317,27 @@ class XsdSchema
                     $aMatches[1][2]
                 ], //
                 self::$readable_messages[self::$lang]['enum'], //
+                1);
+                break;
+            /**
+             * Fixed value
+             */
+            case 1858:
+                print_r($aMatches);
+                $nodes = self::$xpath->query("//xsdsc:{$element}");
+                $fieldMessage = self::getPath($nodes[0]->getNodePath());
+                $ruleMessage = 'fixed';
+                $errMessage = preg_replace([
+                    "/\?/",
+                    "/\?/",
+                    "/\?/"
+                ], //
+                [
+                    $fieldMessage,
+                    $aMatches[1][2],
+                    $aMatches[1][1]
+                ], //
+                self::$readable_messages[self::$lang]['fixed'], //
                 1);
                 break;
             /**
@@ -441,7 +482,7 @@ class XsdSchema
      */
     public static function validate(string $xml, string $xsdPath, ?string $rootNS = null, ?string $prefixError = null): bool
     {
-        self::$prefixErrors = $prefixError;
+        self::$prefixErrors = $prefixError ?? '';
         /**
          * Check if XSD file exists
          */
@@ -530,6 +571,14 @@ class XsdSchema
     {
         return is_array(self::$systemErrors) && ! empty(self::$systemErrors) ? self::$systemErrors : null;
     }
+
+    /**
+     * Check if errors data are filled
+     *
+     * @return bool
+     */
+    public static function hasErrors(): bool
+    {
+        return is_array(self::$errors) && ! empty(self::$errors);
+    }
 }
-
-
