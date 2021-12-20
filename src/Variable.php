@@ -33,7 +33,7 @@ class Variable
      */
     public function check($input): void
     {
-        self::$instance->check($input);
+        Variable::$instance->check($input);
     }
 
     /**
@@ -43,13 +43,14 @@ class Variable
      *
      * @throws ComponentException
      */
-    public static function __callStatic(string $ruleName, array $arguments): bool
+    public static function __callStatic(string $ruleName, array $arguments): Validator
     {
-        $rule = Variable::create()->__call($ruleName, $arguments[1] ?? []);
-        return call_user_func_array([
-            $rule,
-            'validate'
-        ], $arguments);
+        return Variable::create()->__call($ruleName, $arguments);
+        // $rule = Variable::create()->__call($ruleName, $arguments[1] ?? []);
+        // return call_user_func_array([
+        // $rule,
+        // 'validate'
+        // ], $arguments);
     }
 
     /**
@@ -61,8 +62,8 @@ class Variable
      */
     public function __call(string $ruleName, array $arguments): Validator
     {
-        self::$instance->addRule(Factory::getDefaultInstance()->rule($ruleName, $arguments));
-        return self::$instance;
+        Variable::$instance->addRule(Factory::getDefaultInstance()->rule($ruleName, $arguments));
+        return Variable::$instance;
     }
 }
 
