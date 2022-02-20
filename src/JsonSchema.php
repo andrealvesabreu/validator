@@ -7,8 +7,6 @@ namespace Inspire\Validator;
  *
  * @author aalves
  */
-class JsonSchema extends \Inspire\Core\Utils\JsonValidator
+class JsonSchema extends \Inspire\Config\JsonValidator
 {
 }
-
-

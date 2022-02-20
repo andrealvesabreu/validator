@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 namespace Inspire\Validator;
 
-use Inspire\Core\System\Message;
-use Inspire\Core\System\SystemMessage;
+use Inspire\Support\Message\System\Message;
+use Inspire\Support\Message\System\SystemMessage;
 
 /**
  * Description of JsonSchema
@@ -18,7 +18,7 @@ class XsdSchema
      *
      * @var string
      */
-    private static string $lang = \Inspire\Core\System\Language::EN_US;
+    private static string $lang = 'en_US';
 
     /**
      * Define a prefix to set readable errors
@@ -32,7 +32,7 @@ class XsdSchema
      * @var array
      */
     private static array $readable_messages = [
-        \Inspire\Core\System\Language::PT_BR => [
+        'pt_BR' => [
             'minItems' => "O grupo '?' deve ter no mínimo ? elementos, mas apenas ? foram informados.",
             'maxItems' => "O grupo '?' deve ter no máximo ? elementos, mas foram informados ?.",
             'length' => "O campo '?' deve ter exatamente ? caracteres, mas foram informados ?.",
@@ -57,7 +57,7 @@ class XsdSchema
             'noMatching' => "Não há regras de validação o elemento '?'.",
             'fixed' => "O campo '?' deve ser preenchido o valor fixo '?', mas foi informado '?'"
         ],
-        \Inspire\Core\System\Language::EN_US => [
+        'en_US' => [
             'minItems' => "The group '?' must have at least ? elements, but only ? was informed.",
             'maxItems' => "The group '?' must have at most ? elements, but ? was informed.",
             'length' => "The field '?' must have exactly ? characters, but ? was informed.",

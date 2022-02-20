@@ -3,3 +3,5 @@
 /.buildpath
 /.project
 /composer.phar
+/private/cache/retriever/catalog.xml
+/private/cache/retriever/www.w3.org/TR/2002/REC-xmldsig-core-20020212/Overview.html.xml

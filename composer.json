@@ -11,7 +11,7 @@
 	"require" : {
 		"php" : ">=7.4",
 		"respect/validation" : "~2.2",
-		"inspire/core" : "0.1.0"
+		"inspire/config" : "~0.1"
 	},
 	"authors" : [{
 			"name" : "André Alves",
