@@ -442,7 +442,7 @@ class XsdSchema
             (string) $error->code, //
             $typeError, //
             false);
-            $sysErr->setExtra([
+            $sysErr->setExtras([
                 'field' => $fieldMessage,
                 'rule' => $ruleMessage
             ]);
