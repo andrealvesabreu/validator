@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Validator;
 
 use Inspire\Support\Message\System\Message;
@@ -28,6 +30,25 @@ class XsdSchema
     private static string $prefixErrors = '';
 
     /**
+     * List fo fields that can get value when validating
+     */
+    private static array $allowGetValue = [
+        'length', //Exists, but have an invalid length
+        'minLength', //Exists, but have an invalid length
+        'maxLength', //Exists, but have an invalid length
+        'format', //Exists, but have an invalid format
+        'minExclusive', //Exists, but have an invalid value
+        'minInclusive', //Exists, but have an invalid value
+        'maxExclusive', //Exists, but have an invalid value
+        'maxInclusive', //Exists, but have an invalid value
+        'pattern', //Exists, but have an invalid value
+        'patternAttr', //Exists, but have an invalid attr value
+        'type', //Exists, but have an invalid type
+        'enum', //Exists, but have an invalid value
+        'fixed', //Exists, but have an invalid value
+    ];
+
+    /**
      *
      * @var array
      */
@@ -51,7 +72,8 @@ class XsdSchema
             'allowed' => "O campo '?' é não é permitido.",
             'allowedAttr' => "O atributo '?' do campo '?' não é permitido.",
             'type' => "O campo '?' deve ser um de [?], mas foi informado '?'.",
-            'unexpected' => "O campo '?' não é esperado. Esperado é um de: ?.",
+            'unexpected' => "O campo '?' não é esperado.",
+            'unexpected_alternative' => "O campo '?' não é esperado. Esperado é um de: ?.",
             'enum' => "O campo '?' deve ser preenchido com um dos seguintes valores: ?, mas foi preenchido com ?.",
             'oneOf' => "O campo '?' não corresponde a nenhum dos esquemas disponíveis.",
             'noMatching' => "Não há regras de validação o elemento '?'.",
@@ -76,7 +98,8 @@ class XsdSchema
             'allowed' => "The field '?' is not allowed.",
             'allowedAttr' => "The attribute '?' of the field '?' is not allowed.",
             'type' => "The field '?' must be one of [?], but it was informed '?'.",
-            'unexpected' => "The field '?' is unexpected. Expected is one of: ?.",
+            'unexpected' => "The field '?' is unexpected.",
+            'unexpected_alternative' => "The field '?' is unexpected. Expected is one of: ?.",
             'enum' => "The field '?' must be filled with one of the following values: ?, but was filled with ?.",
             'oneOf' => "The field '?' does not match any of the available schemes.",
             'noMatching' => "There is no validation rule for '?' field.",
@@ -133,21 +156,21 @@ class XsdSchema
 
         $typeError = null;
         switch ($error->level) {
-            /**
+                /**
              * Level warning
              */
             case LIBXML_ERR_WARNING:
                 $typeError = Message::MSG_WARNING;
                 break;
-            /**
-             * Level error
-             */
+                /**
+                 * Level error
+                 */
             case LIBXML_ERR_ERROR:
                 $typeError = Message::MSG_ERROR;
                 break;
-            /**
-             * Level critical, unrecoverable error
-             */
+                /**
+                 * Level critical, unrecoverable error
+                 */
             case LIBXML_ERR_FATAL:
                 $typeError = Message::MSG_CRITICAL;
                 break;
@@ -163,47 +186,54 @@ class XsdSchema
         $errMessage = null;
         $fieldMessage = null;
         $ruleMessage = null;
+        $expected = null;
         switch ($error->code) {
-            /**
+                /**
              * No matching global
              */
             case 1845:
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'length';
-                $errMessage = preg_replace([
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage
-                ], //
-                self::$readable_messages[self::$lang]['noMatching'], //
-                1);
+                $errMessage = preg_replace(
+                    [
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage
+                    ], //
+                    self::$readable_messages[self::$lang]['noMatching'], //
+                    1
+                );
                 break;
-            /**
-             * exactly length
-             */
+                /**
+                 * exactly length
+                 */
             case 1830:
                 $nodes = self::$xpath->query("//xsdsc:{$element}[string-length() = {$aMatches[1][2]}]");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'length';
-                $errMessage = preg_replace([
-                    "/\?/",
-                    "/\?/",
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage,
-                    implode(', ', array_slice($aMatches[1], 3)),
-                    $aMatches[1][2]
-                ], //
-                self::$readable_messages[self::$lang]['length'], //
-                1);
+                $expected =  implode(', ', array_slice($aMatches[1], 3));
+                $set = $aMatches[1][2];
+                $errMessage = preg_replace(
+                    [
+                        "/\?/",
+                        "/\?/",
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage,
+                        $expected,
+                        $set
+                    ], //
+                    self::$readable_messages[self::$lang]['length'], //
+                    1
+                );
                 break;
-            /**
-             * minLength
-             * maxLength
-             */
+                /**
+                 * minLength
+                 * maxLength
+                 */
             case 1831:
             case 1832:
                 if (isset($aMatches[1][4])) {
@@ -214,27 +244,30 @@ class XsdSchema
                     $nodes = self::$xpath->query("//xsdsc:{$element}[string-length() = {$aMatches[1][2]}]");
                     $set = $aMatches[1][2];
                 }
+                $expected =  $aMatches[1][3];
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = $aMatches[1][1];
-                $errMessage = preg_replace([
-                    "/\?/",
-                    "/\?/",
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage,
-                    $aMatches[1][3],
-                    $aMatches[1][2]
-                ], //
-                self::$readable_messages[self::$lang][$aMatches[1][1]], //
-                1);
+                $errMessage = preg_replace(
+                    [
+                        "/\?/",
+                        "/\?/",
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage,
+                        $expected,
+                        $aMatches[1][2]
+                    ], //
+                    self::$readable_messages[self::$lang][$aMatches[1][1]], //
+                    1
+                );
                 break;
-            /**
-             * minInclusive
-             * maxInclusive
-             * minExclusive
-             * maxExclusive
-             */
+                /**
+                 * minInclusive
+                 * maxInclusive
+                 * minExclusive
+                 * maxExclusive
+                 */
             case 1833:
             case 1834:
             case 1835:
@@ -242,22 +275,26 @@ class XsdSchema
                 $nodes = self::$xpath->query("//xsdsc:{$element}[.=\"{$aMatches[1][2]}\"]");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = $aMatches[1][1];
-                $errMessage = preg_replace([
-                    "/\?/",
-                    "/\?/",
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage,
-                    implode(', ', array_slice($aMatches[1], 3)),
-                    $aMatches[1][2]
-                ], //
-                self::$readable_messages[self::$lang][$aMatches[1][1]], //
-                1);
+                $expected = implode(', ', array_slice($aMatches[1], 3));
+                $set = $aMatches[1][2];
+                $errMessage = preg_replace(
+                    [
+                        "/\?/",
+                        "/\?/",
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage,
+                        $expected,
+                        $set
+                    ], //
+                    self::$readable_messages[self::$lang][$aMatches[1][1]], //
+                    1
+                );
                 break;
-            /**
-             * Patterns
-             */
+                /**
+                 * Patterns
+                 */
             case 1839:
                 if (isset($aMatches[1][4])) {
                     $nodes = self::$xpath->query("//xsdsc:{$element}");
@@ -270,137 +307,156 @@ class XsdSchema
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'pattern';
                 if ($attr) {
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/",
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        $attr,
-                        $fieldMessage,
-                        end($aMatches[1]),
-                        $set
-                    ], //
-                    self::$readable_messages[self::$lang]['patternAttr'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/",
+                            "/\?/",
+                            "/\?/",
+                            "/\?/"
+                        ], //
+                        [
+                            $attr,
+                            $fieldMessage,
+                            end($aMatches[1]),
+                            $set
+                        ], //
+                        self::$readable_messages[self::$lang]['patternAttr'], //
+                        1
+                    );
                 } else {
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        $fieldMessage,
-                        end($aMatches[1]),
-                        $set
-                    ], //
-                    self::$readable_messages[self::$lang]['pattern'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/",
+                            "/\?/",
+                            "/\?/"
+                        ], //
+                        [
+                            $fieldMessage,
+                            end($aMatches[1]),
+                            $set
+                        ], //
+                        self::$readable_messages[self::$lang]['pattern'], //
+                        1
+                    );
                 }
                 break;
-            /**
-             * Enumerations
-             */
+                /**
+                 * Enumerations
+                 */
             case 1840:
                 $nodes = self::$xpath->query("//xsdsc:{$element}[.=\"{$aMatches[1][2]}\"]");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'enum';
-                $errMessage = preg_replace([
-                    "/\?/",
-                    "/\?/",
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage,
-                    implode(', ', array_slice($aMatches[1], 3)),
-                    $aMatches[1][2]
-                ], //
-                self::$readable_messages[self::$lang]['enum'], //
-                1);
+                $expected = implode(', ', array_slice($aMatches[1], 3));
+                $set = $aMatches[1][2];
+                $errMessage = preg_replace(
+                    [
+                        "/\?/",
+                        "/\?/",
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage,
+                        $expected,
+                        $set
+                    ], //
+                    self::$readable_messages[self::$lang]['enum'], //
+                    1
+                );
                 break;
-            /**
-             * Fixed value
-             */
+                /**
+                 * Fixed value
+                 */
             case 1858:
-                print_r($aMatches);
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'fixed';
-                $errMessage = preg_replace([
-                    "/\?/",
-                    "/\?/",
-                    "/\?/"
-                ], //
-                [
-                    $fieldMessage,
-                    $aMatches[1][2],
-                    $aMatches[1][1]
-                ], //
-                self::$readable_messages[self::$lang]['fixed'], //
-                1);
+                $expected = $aMatches[1][2];
+                $set = $aMatches[1][1];
+                $errMessage = preg_replace(
+                    [
+                        "/\?/",
+                        "/\?/",
+                        "/\?/"
+                    ], //
+                    [
+                        $fieldMessage,
+                        $expected,
+                        $set
+                    ], //
+                    self::$readable_messages[self::$lang]['fixed'], //
+                    1
+                );
                 break;
-            /**
-             * not allowed
-             */
+                /**
+                 * not allowed
+                 */
             case 1866:
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'allowed';
                 if (isset($aMatches[1])) {
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        $aMatches[1][1],
-                        $fieldMessage
-                    ], //
-                    self::$readable_messages[self::$lang]['allowedAttr'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/",
+                            "/\?/"
+                        ], //
+                        [
+                            $aMatches[1][1],
+                            $fieldMessage
+                        ], //
+                        self::$readable_messages[self::$lang]['allowedAttr'], //
+                        1
+                    );
                 } else {
-                    $errMessage = preg_replace([
-                        "/\?/"
-                    ], //
-                    [
-                        $fieldMessage
-                    ], //
-                    self::$readable_messages[self::$lang]['allowed'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/"
+                        ], //
+                        [
+                            $fieldMessage
+                        ], //
+                        self::$readable_messages[self::$lang]['allowed'], //
+                        1
+                    );
                 }
                 break;
-            /**
-             * not required
-             */
+                /**
+                 * not required
+                 */
             case 1868:
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 $ruleMessage = 'required';
                 if (isset($aMatches[1])) {
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        $aMatches[1][1],
-                        $fieldMessage
-                    ], //
-                    self::$readable_messages[self::$lang]['requiredAttr'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/",
+                            "/\?/"
+                        ], //
+                        [
+                            $aMatches[1][1],
+                            $fieldMessage
+                        ], //
+                        self::$readable_messages[self::$lang]['requiredAttr'], //
+                        1
+                    );
                 } else {
-                    $errMessage = preg_replace([
-                        "/\?/"
-                    ], //
-                    [
-                        $fieldMessage
-                    ], //
-                    self::$readable_messages[self::$lang]['required'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/"
+                        ], //
+                        [
+                            $fieldMessage
+                        ], //
+                        self::$readable_messages[self::$lang]['required'], //
+                        1
+                    );
                 }
                 break;
-            /**
-             * Unexpected element
-             */
+                /**
+                 * Unexpected element
+                 */
             case 1871:
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $matchExpect = [];
@@ -411,40 +467,58 @@ class XsdSchema
                 $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 if (strpos($error->message, 'Missing child')) {
                     $ruleMessage = 'missing';
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        trim(str_replace("{{$namespace}}", '', end($matchExpect))),
-                        $fieldMessage
-                    ], //
-                    self::$readable_messages[self::$lang]['missing'], //
-                    1);
+                    $errMessage = preg_replace(
+                        [
+                            "/\?/",
+                            "/\?/"
+                        ], //
+                        [
+                            trim(str_replace("{{$namespace}}", '', end($matchExpect))),
+                            $fieldMessage
+                        ], //
+                        self::$readable_messages[self::$lang]['missing'], //
+                        1
+                    );
                 } else {
                     $ruleMessage = 'unexpected';
-                    $errMessage = preg_replace([
-                        "/\?/",
-                        "/\?/"
-                    ], //
-                    [
-                        $fieldMessage,
-                        str_replace("{{$namespace}}", '', end($matchExpect))
-                    ], //
-                    self::$readable_messages[self::$lang]['unexpected'], //
-                    1);
+                    if (empty($matchExpect)) {
+                        $errMessage = preg_replace(
+                            "/\?/",
+                            $fieldMessage, //
+                            self::$readable_messages[self::$lang]['unexpected'], //
+                            1
+                        );
+                    } else {
+                        $errMessage = preg_replace(
+                            [
+                                "/\?/",
+                                "/\?/"
+                            ], //
+                            [
+                                $fieldMessage,
+                                str_replace("{{$namespace}}", '', end($matchExpect))
+                            ], //
+                            self::$readable_messages[self::$lang]['unexpected'], //
+                            1
+                        );
+                    }
                 }
                 break;
         }
         if ($errMessage !== null) {
             self::$readableErrors[] = $errMessage;
-            $sysErr = new SystemMessage($errMessage, //
-            (string) $error->code, //
-            $typeError, //
-            false);
+            $sysErr = new SystemMessage(
+                $errMessage, //
+                (string) $error->code, //
+                $typeError, //
+                false
+            );
             $sysErr->setExtras([
                 'field' => $fieldMessage,
-                'rule' => $ruleMessage
+                'rule' => $ruleMessage,
+                'value' => self::getValue($fieldMessage, $ruleMessage),
+                'set' => $set,
+                'expected' => $expected
             ]);
             self::$systemErrors[] = $sysErr;
         }
@@ -464,11 +538,25 @@ class XsdSchema
             $path[] = $nodes->item(0)->nodeName;
             $pathIn = explode('/', $string);
             array_pop($pathIn);
-            if (! empty($pathIn)) {
+            if (!empty($pathIn)) {
                 return self::getPath(implode('/', $pathIn), $path);
             }
         }
         return self::$prefixErrors . implode('->', array_reverse($path));
+    }
+    /**
+     * Get named path based on element XPath
+     *
+     * @param string $string
+     * @param array $path
+     * @return string
+     */
+    private static function getValue(string $path, string $rule): ?string
+    {
+        if (in_array($rule, self::$allowGetValue)) {
+            return self::$xpath->query("//xsdsc:" . str_replace('->', '/xsdsc:', str_replace(self::$prefixErrors, '', $path)))->item(0)->nodeValue;
+        }
+        return null;
     }
 
     /**
@@ -486,8 +574,8 @@ class XsdSchema
         /**
          * Check if XSD file exists
          */
-        $xsdPath = strtolower(substr($xsdPath, - 3)) == 'xsd' ? $xsdPath : "{$xsdPath}.xsd";
-        if (! file_exists($xsdPath) || ! is_readable($xsdPath)) {
+        $xsdPath = strtolower(substr($xsdPath, -3)) == 'xsd' ? $xsdPath : "{$xsdPath}.xsd";
+        if (!file_exists($xsdPath) || !is_readable($xsdPath)) {
             throw new \Exception("XSD file is not readable or not exists.");
         }
         /**
@@ -496,7 +584,7 @@ class XsdSchema
         libxml_use_internal_errors(true);
         libxml_clear_errors();
         simplexml_load_string($xml);
-        if (! empty(libxml_get_errors())) {
+        if (!empty(libxml_get_errors())) {
             throw new \Exception("You must provide a valid XML.");
         }
         /**
@@ -516,7 +604,7 @@ class XsdSchema
         $domXml = new \DOMDocument();
         $domXml->loadXML($xml);
         self::$xpath = new \DOMXpath($domXml);
-        if (! $domXml->schemaValidate($xsdPath)) {
+        if (!$domXml->schemaValidate($xsdPath)) {
             $errors = libxml_get_errors();
             foreach ($errors as $error) {
                 self::libxmlParseError($error, $rootNS);
@@ -549,7 +637,7 @@ class XsdSchema
      */
     public static function getErrors(): ?array
     {
-        return is_array(self::$errors) && ! empty(self::$errors) ? self::$errors : null;
+        return is_array(self::$errors) && !empty(self::$errors) ? self::$errors : null;
     }
 
     /**
@@ -559,7 +647,7 @@ class XsdSchema
      */
     public static function getReadableErrors(): ?array
     {
-        return is_array(self::$readableErrors) && ! empty(self::$readableErrors) ? self::$readableErrors : null;
+        return is_array(self::$readableErrors) && !empty(self::$readableErrors) ? self::$readableErrors : null;
     }
 
     /**
@@ -569,7 +657,7 @@ class XsdSchema
      */
     public static function getSystemErrors(): ?array
     {
-        return is_array(self::$systemErrors) && ! empty(self::$systemErrors) ? self::$systemErrors : null;
+        return is_array(self::$systemErrors) && !empty(self::$systemErrors) ? self::$systemErrors : null;
     }
 
     /**
@@ -579,6 +667,6 @@ class XsdSchema
      */
     public static function hasErrors(): bool
     {
-        return is_array(self::$errors) && ! empty(self::$errors);
+        return is_array(self::$errors) && !empty(self::$errors);
     }
 }
