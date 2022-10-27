@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 use Inspire\Validator\Variable;
 use Inspire\Validator\JsonSchema;
 use Inspire\Validator\XsdSchema;
@@ -7,17 +9,16 @@ use Inspire\Validator\XsdSchema;
 define('APP_NAME', 'test');
 include dirname(__DIR__) . '/vendor/autoload.php';
 
-$xsd = "/home/aalves/eclipse-workspace/validator/tests/schemas/MDFe3.00a/mdfe_v3.00.xsd";
-$xsd2 = "/home/aalves/eclipse-workspace/validator/tests/schemas/MDFe3.00a/mdfeModalRodoviario_v3.00.xsd";
+$xsd = __DIR__ . "/schemas/MDFe3.00a/mdfe_v3.00.xsd";
+$xsd2 = __DIR__ . "/schemas/MDFe3.00a/mdfeModalRodoviario_v3.00.xsd";
 $val = XsdSchema::validateMulti([
+    // [
+    //     'xsd' => $xsd,
+    //     'ns' => 'http://www.portalfiscal.inf.br/mdfe',
+    //     'prefix' => ''
+    // ],
     [
-        'xml' => '<?xml version="1.0" encoding="utf-8"?><MDFe xmlns="http://www.portalfiscal.inf.br/mdfe"><infMDFe Id="MDFeXXXXXXXXXXXXXXXXXXXXXXX" versao="3.00"><ide><cUF>35</cUF><tpAmb>2</tpAmb><tpEmit>1</tpEmit><mod>58</mod><serie>1</serie><nMDF>2</nMDF><cMDF>00000002</cMDF><cDV>6</cDV><modal>1</modal><dhEmi>2017-08-15T08:08:51-03:00</dhEmi><tpEmis>1</tpEmis><procEmi>0</procEmi><verProc>1.0.0</verProc><UFIni>SP</UFIni><UFFim>MT</UFFim><infMunCarrega><cMunCarrega>3547809</cMunCarrega><xMunCarrega>Santo André</xMunCarrega></infMunCarrega><infPercurso><UFPer>MS</UFPer></infPercurso></ide><emit><CNPJ>XXXXXXXXXXXXXXXX</CNPJ><IE>XXXXXXXXXXXXXXXXXXXXXX</IE><xNome>XXXXXXXXXXXXXXXXXXXXXXXX</xNome><enderEmit><xLgr>XXXXXXXXXXXXXXXXXXXX</xLgr><nro>XXX</nro><xBairro>XXXXXXXXXXXXXXX</xBairro><cMun>3550308</cMun><xMun>Sao Paulo</xMun><CEP>XXXXXXXXXXX</CEP><UF>SP</UF><email>XXXXXXXX</email></enderEmit></emit><infModal versaoModal="3.00"><rodo><infANTT><RNTRC>00000000</RNTRC><infContratante><CNPJ>XXXXXXXXXXX</CNPJ></infContratante></infANTT><veicTracao><placa>XXXXX</placa><tara>8600</tara><condutor><xNome>XXXXXX</xNome><CPF>XXXXX</CPF></condutor><tpRod>01</tpRod><tpCar>02</tpCar><UF>SP</UF></veicTracao></rodo></infModal><infDoc><infMunDescarga><cMunDescarga>5107602</cMunDescarga><xMunDescarga>Rondonópolis</xMunDescarga><infCTe><chCTe>XXXXXXXXXXXXXXXXXXXXXXXXXX</chCTe></infCTe></infMunDescarga></infDoc><seg><infResp><respSeg>1</respSeg><CNPJ>00000000000000</CNPJ></infResp><infSeg><xSeg>XXXXXXXXXXXXXXXXXXXXX</xSeg><CNPJ>XXXXXXXXXXXXXXXXXXX</CNPJ></infSeg><nApol>XXXXXXXXXXXXXXXXXXX</nApol><nAver>0000</nAver></seg><tot><qCTe>1</qCTe><vCarga>199516.96</vCarga><cUnid>01</cUnid><qCarga>11115</qCarga></tot></infMDFe><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#MDFe35170812195067000108580010000000021000000026"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>XXXXXXXXXXXXXXXXXXXXXXXXXXXXX</DigestValue></Reference></SignedInfo><SignatureValue>XXXXXXXXXXXXXXXXXXXXXXXXXXX</SignatureValue><KeyInfo><X509Data><X509Certificate>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</X509Certificate></X509Data></KeyInfo></Signature></MDFe>',
-        'xsd' => $xsd,
-        'ns' => 'http://www.portalfiscal.inf.br/mdfe',
-        'prefix' => ''
-    ],
-    [
-        'xml' => '<?xml version="1.0" encoding="utf-8"?><rodo><infANTT><RNTRC>00000000</RNTRC><infContratante><CNPJ>XXXXXXXXXXX</CNPJ></infContratante></infANTT><veicTracao><placa>XXXXX</placa><tara>8600</tara><condutor><xNome>XXXXXX</xNome><CPF>XXXXX</CPF></condutor><tpRod>01</tpRod><tpCar>02</tpCar><UF>SP</UF></veicTracao></rodo>',
+        'xml' => '<?xml version="1.0" encoding="utf-8"?><rodo><infANTT><RNTRC>str1234</RNTRC><infCIOT><CIOT>str1234</CIOT><CPF>str1234</CPF><CNPJ>str1234</CNPJ></infCIOT><valePed><disp><CNPJForn>str1234</CNPJForn><nCompra>str1234</nCompra><vValePed>str1234</vValePed><tpValePed>01</tpValePed></disp><categCombVeic>02</categCombVeic></valePed><infContratante><xNome>str1234</xNome><CPF>str1234</CPF><CNPJ>str1234</CNPJ><idEstrangeiro>str1234</idEstrangeiro><infContrato><NroContrato>str1234</NroContrato><vContratoGlobal>str1234</vContratoGlobal></infContrato></infContratante><infPag><xNome>str1234</xNome><CPF>str1234</CPF><CNPJ>str1234</CNPJ><idEstrangeiro>str1234</idEstrangeiro><Comp><tpComp>01</tpComp><vComp>str1234</vComp><xComp>str1234</xComp></Comp><vContrato>str1234</vContrato><indAltoDesemp>1</indAltoDesemp><indPag>0</indPag><vAdiant>str1234</vAdiant><indAntecipaAdiant>1</indAntecipaAdiant><infPrazo><nParcela>str1234</nParcela><dVenc>str1234</dVenc><vParcela>str1234</vParcela></infPrazo><tpAntecip>0</tpAntecip><infBanc><codBanco>str12</codBanco><codAgencia>str1234</codAgencia><CNPJIPEF>str1234</CNPJIPEF><PIX>str1234</PIX></infBanc></infPag></infANTT><veicTracao><cInt>str1234</cInt><placa>str1234</placa><RENAVAM>str123400</RENAVAM><tara>str1234</tara><capKG>str1234</capKG><capM3>str1234</capM3><prop><CPF>str1234</CPF><CNPJ>str1234</CNPJ><RNTRC>str1234</RNTRC><xNome>str1234</xNome><tpProp>0</tpProp></prop><condutor><xNome>str1234</xNome><CPF>str1234</CPF></condutor><tpRod>01</tpRod><tpCar>00</tpCar><UF>AC</UF></veicTracao><veicReboque><cInt>str1234</cInt><placa>str1234</placa><RENAVAM>str123400</RENAVAM><tara>str1234</tara><capKG>str1234</capKG><capM3>str1234</capM3><prop><CPF>str1234</CPF><CNPJ>str1234</CNPJ><RNTRC>str1234</RNTRC><xNome>str1234</xNome><tpProp>0</tpProp></prop><tpCar>00</tpCar><UF>AC</UF></veicReboque><codAgPorto>str1234</codAgPorto><lacRodo><nLacre>str1234</nLacre></lacRodo></rodo>',
         'xsd' => $xsd2,
         'ns' => 'http://www.portalfiscal.inf.br/mdfe',
         'prefix' => 'MDFe->infMDFe->infModal->'
@@ -30,6 +31,7 @@ print_r(XsdSchema::getReadableErrors());
 //Get systemMessage errors
 print_r(XsdSchema::getSystemErrors());
 
+exit;
 var_dump(Variable::base64()->validate('cmVzcGVjdCE='));
 var_dump(Variable::base64()->validate('cmVzcGVjdCE'));
 var_dump(Variable::email()->validate('test@email.com'));
@@ -85,7 +87,7 @@ $schema = <<<DATA
     }
 }
 DATA;
-if (! JsonSchema::validateJson(json_encode([
+if (!JsonSchema::validateJson(json_encode([
     "name" => "teste",
     "region" => null,
     "credentials" => [
@@ -97,6 +99,3 @@ if (! JsonSchema::validateJson(json_encode([
     print_r(JsonSchema::getReadableErrors());
     print_r(JsonSchema::getSystemErrors());
 }
-
-
-

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Inspire\Validator;
 
-use Inspire\Support\Message\System\Message;
-use Inspire\Support\Message\System\SystemMessage;
+use Inspire\Support\Message\System\{
+    Message,
+    SystemMessage
+};
 
 /**
  * Description of JsonSchema

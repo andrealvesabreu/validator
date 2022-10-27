@@ -1,8 +1,10 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace Inspire\Validator;
 
-use Respect\Validation\ {
+use Respect\Validation\{
     Validator,
     Factory
 };
@@ -66,4 +68,3 @@ class Variable
         return Variable::$instance;
     }
 }
-
