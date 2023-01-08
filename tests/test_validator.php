@@ -31,7 +31,7 @@ print_r(XsdSchema::getReadableErrors());
 //Get systemMessage errors
 print_r(XsdSchema::getSystemErrors());
 
-exit;
+// exit;
 var_dump(Variable::base64()->validate('cmVzcGVjdCE='));
 var_dump(Variable::base64()->validate('cmVzcGVjdCE'));
 var_dump(Variable::email()->validate('test@email.com'));
