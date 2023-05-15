@@ -143,6 +143,7 @@ class XsdSchema
      */
     private static function libxmlParseError(\LibXMLError $error, string $ns = null)
     {
+        var_dump($error);
         $aMatches = [];
         /**
          * Getting element and namespace
@@ -463,10 +464,10 @@ class XsdSchema
                 $nodes = self::$xpath->query("//xsdsc:{$element}");
                 $matchExpect = [];
                 preg_match_all('!\(([^\)]+)\)!', $error->message, $matchExpect);
+                $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 if (is_array($matchExpect[0])) {
                     $matchExpect = end($matchExpect);
                 }
-                $fieldMessage = self::getPath($nodes[0]->getNodePath());
                 if (strpos($error->message, 'Missing child')) {
                     $ruleMessage = 'missing';
                     $errMessage = preg_replace(
@@ -498,9 +499,10 @@ class XsdSchema
                             ], //
                             [
                                 $fieldMessage,
-                                str_replace("{{$namespace}}", '', end($matchExpect))
+                                // substr($fieldMessage, 0, strrpos($fieldMessage, '->')) . '->' . 
+                                trim(str_replace("{{$namespace}}", '', end($matchExpect)))
                             ], //
-                            self::$readable_messages[self::$lang]['unexpected'], //
+                            self::$readable_messages[self::$lang]['unexpected_alternative'], //
                             1
                         );
                     }
@@ -546,6 +548,7 @@ class XsdSchema
         }
         return self::$prefixErrors . implode('->', array_reverse($path));
     }
+    
     /**
      * Get named path based on element XPath
      *
